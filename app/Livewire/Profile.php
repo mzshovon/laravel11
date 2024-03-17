@@ -2,10 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Profile extends Component
 {
+    use WithPagination;
     public string $userName;
 
     public string $userProfileImage;
@@ -18,6 +21,8 @@ class Profile extends Component
 
     public function render()
     {
-        return view('livewire.profile');
+        return view('livewire.profile', [
+            'users' => User::paginate(10)
+        ]);
     }
 }
