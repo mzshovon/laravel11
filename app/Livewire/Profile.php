@@ -9,7 +9,12 @@ use Livewire\WithPagination;
 class Profile extends Component
 {
     use WithPagination;
+
     public string $userName;
+    public int $perPage = 10;
+    public string $search = "";
+    public string $sortingDirection = "ASC";
+    public string $sortingColumn = "name";
 
     public string $userProfileImage;
 
@@ -19,10 +24,32 @@ class Profile extends Component
         $this->userProfileImage = auth()->user()->image ?? "https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Image.png";
     }
 
+    public function sort($column)
+    {
+        if($this->sortingColumn === $column) {
+            $this->sortingDirection = ($this->sortingDirection === "ASC") ? "DESC" : "ASC";
+            return;
+        }
+        $this->sortingColumn = $column;
+        $this->sortingDirection = "ASC";
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         return view('livewire.profile', [
-            'users' => User::paginate(10)
+            'users' => User::search($this->search)
+                        ->orderBy($this->sortingColumn, $this->sortingDirection)
+                        ->paginate($this->perPage)
         ]);
     }
 }
