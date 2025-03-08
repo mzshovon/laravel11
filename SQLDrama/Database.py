@@ -55,7 +55,7 @@ class Database:
 
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute(query, params or ())
+                cursor.execute(query, params if params else None)
                 if query.strip().lower().startswith("select"):
                     return cursor.fetchall()
                 self.connection.commit()
