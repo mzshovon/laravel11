@@ -1,0 +1,15 @@
+agent : 
+  - gemini : 
+    - model : "gemini-2.0-flash"
+    - api_key : "AIzaSyD4jnUMAk4xiyWQua0x65N2cpqdTdc3hSg"
+  - openai : 
+    - model : ""
+    - api_key : ""
+  - ollama : 
+    - model : "mistral"
+export_extension:
+  - csv : csv
+  - excel : xlsx
+  - notepad : txt
+  - text : txt
+  - pdf : pdf

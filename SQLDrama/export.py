@@ -1,9 +1,12 @@
 import pandas as pd
 
-def export_to_csv(data, filename):
+def export_to_file(filetype, data, filename):
     df = pd.DataFrame(data)
-    df.to_csv(filename, index=False)
-    
-def export_to_excel(data, filename):
-    df = pd.DataFrame(data)
-    df.to_excel(filename, index=False)
+    if filetype == "csv":
+        df.to_csv(filename, index=False)
+    elif filetype == "excel":
+        df.to_excel(filename, sheet_name="data", index=False)
+    elif filetype == "pdf":
+        df.to_hdf(filename, index=False)
+    else:
+        raise Exception("Invalid file type given")

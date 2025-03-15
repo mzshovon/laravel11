@@ -49,12 +49,15 @@ class AiController extends Controller
         // Validate the request
         $request->validate([
             'prompt' => 'required|string',
-            'model' => 'sometimes|string'
+            'model' => 'nullable|string',
+            'export' => 'nullable|string'
         ]);
 
         // Get the prompt from the request
         $prompt = $request->input('prompt');
-        $model = $request->input('model', 'default');
+        $model = $request->input('model', 'ollama');
+        $export = $request->input('export', 'csv');
+        $export_path = base_path('storage\temp');
 
         $cacheKey = 'ai_response_' . md5($prompt);
 
@@ -94,12 +97,15 @@ class AiController extends Controller
         }
 
         // Process the request in a separate thread to allow streaming
-        return response()->stream(function () use ($prompt, $model, $cacheKey) {
+        return response()->stream(function () use ($prompt, $model, $export, $export_path, $cacheKey) {
             // Call Python script to generate the query
             $pythonProcess = new SymfonyProcess([
                 'python',
                 base_path('SQLDrama/prompt.py'),
-                $prompt
+                trim($prompt, "'"),
+                trim($model, "'"),
+                trim($export, "'"),
+                trim($export_path, "'")
             ]);
             $pythonProcess->setTimeout(120); // 2 minutes timeout
             $pythonProcess->start();
@@ -125,6 +131,14 @@ class AiController extends Controller
                         // Just log the error, don't send to client
                         Log::error('Error parsing Python output: ' . $e->getMessage());
                     }
+                } else if ($type === SymfonyProcess::ERR) {
+                    // This handles the error output from the process
+                    Log::error('Python script error: ' . $buffer);
+                    echo $this->formatChunk([
+                        'type' => 'error',
+                        'content' => 'Error executing Python script: ' . $buffer
+                    ]);
+                    flush();
                 }
             });
 
