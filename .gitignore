@@ -18,4 +18,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-SQLDrama/__pycache__
+SQLDrama/config.yml
