@@ -19,7 +19,6 @@ export_path = sys.argv[4]
 
 prefix = "Give me MYSQL query for mariaDB supported on prompt: "
 
-
 suffix = ExtractMetaData(prompt=prompt).extract_metadata_from_prompt()
 final_prompt = f"{prefix}{prompt}. Below are the tables and relationships if needed: {suffix}"
 
@@ -40,9 +39,10 @@ result = db.execute_query(sql_query)
 if result is not None:
     extension = ConfigParser("config.yml").get(f"export_extension.{export_type}")
     key_point = uuid.uuid4()
-    file_name = f"{export_path}\{key_point}-file.{extension}"
+    file_name = f"{key_point}-file.{extension}"
+    file = f"{export_path}\{file_name}"
     # print(f"Generating {file_type} file.....")
-    export.export_to_file(export_type, result, file_name)
+    export.export_to_file(export_type, result, file)
     prompt_response['download'] = file_name
 
 print(json.dumps(prompt_response))

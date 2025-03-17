@@ -55,7 +55,7 @@ class AiController extends Controller
 
         // Get the prompt from the request
         $prompt = $request->input('prompt');
-        $model = $request->input('model', 'ollama');
+        $model = $request->input('model', 'gemini');
         $export = $request->input('export', 'csv');
         $export_path = base_path('storage\temp');
 
@@ -112,7 +112,7 @@ class AiController extends Controller
 
             // First, send status that script is starting
             echo $this->formatChunk([
-                'type' => 'story',
+                'type' => 'start',
                 'content' => 'Starting to analyze your request...'
             ]);
             flush();
